@@ -109,6 +109,7 @@ export const handler = async (event: any) => {
     if (!event.body) {
       return handleResponse(400, 'Missing body');
     }
+    console.log(event.body);
     const data: ShopifyData = JSON.parse(event.body);
     let { url, search } = data;
     if (!url.startsWith('https://')) {
@@ -128,6 +129,7 @@ export const handler = async (event: any) => {
       'maximum-tshirt-price': maxPrice,
       currency,
     };
+    console.log(responseData);
 
     return handleResponse(200, responseData);
   } catch (error: any) {
