@@ -39,10 +39,10 @@ The deployment is done via github actions. However, there is also provision to u
     sam deploy
 
 ## API Usage
-To use the application directly via API Gateway, use the following url.
-1. #Replace with your actual API UR
+To use the application directly via Postman or Curl, use the following url.
+1. API URL -> POST
     ```bash
-    Output from SAM Deploy
+    https://bhgmlrnakgru44ob2n3xaiz7hm0thzuu.lambda-url.ap-southeast-2.on.aws/
 
 Make sure to replace `"# Replace with your actual API URL"` with the actual URL of your deployed API endpoint. This updated readme provides clear instructions for installation, usage, and deployment of the application, along with mentioning the technologies used and how to access the deployed application.
 
