@@ -4,7 +4,7 @@ import { IVariant } from './interfaces/IVariant';
 const productCategorySearch = [
   {
     type: 't-shirt',
-    searchTerms: ['t-shirts', 't-shirt', 'tshirts', 'tshirt'],
+    searchTerms: ['t-shirts', 't-shirt', 'tshirts', 'tshirt', 'tee'],
   },
 
   {
