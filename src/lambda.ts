@@ -20,8 +20,8 @@ interface ShopifyData {
 
 interface ResponseData {
   url: string;
-  'min-tshirt-price': number;
-  'max-tshirt-price': number;
+  'minimum-tshirt-price': number;
+  'maximum-tshirt-price': number;
   currency: string;
 }
 
@@ -59,6 +59,8 @@ const getMinMaxPrices = async (url: string, search?: string): Promise<[number, n
       const matchingCategory = productCategorySearch.find((category) => category.type === search);
       if (matchingCategory) {
         searchTerms = matchingCategory.searchTerms;
+      } else {
+        searchTerms = [search.toLowerCase().trim()];
       }
     }
     const response = await fetch(`${url}/products.json`);
@@ -122,8 +124,8 @@ export const handler = async (event: any) => {
 
     const responseData: ResponseData = {
       url,
-      'min-tshirt-price': minPrice,
-      'max-tshirt-price': maxPrice,
+      'minimum-tshirt-price': minPrice,
+      'maximum-tshirt-price': maxPrice,
       currency,
     };
 

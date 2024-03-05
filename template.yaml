@@ -5,9 +5,11 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 Resources:
-  lambda-api-pricing:
+  LambdaApiTest:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: LambdaApiTest
+      Role: 'arn:aws:iam::318240840298:role/Batch_execute'
       Handler: lambda.handler
       Runtime: nodejs20.x
       Architectures:
@@ -16,12 +18,15 @@ Resources:
       Timeout: 100
       FunctionUrlConfig:
         AuthType: NONE
+        Cors:
+          AllowOrigins:
+            - '*'
 
 Outputs:
   MyFunctionUrlEndpoint:
     Description: 'My Lambda Function URL Endpoint'
     Value:
-      Fn::GetAtt: FunctionUrl.FunctionUrl
+      Fn::GetAtt: LambdaApiTestUrl.FunctionUrl
 Globals:
   Function:
     LoggingConfig:
