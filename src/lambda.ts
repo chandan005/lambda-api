@@ -72,8 +72,6 @@ const getMinMaxPrices = async (url: string, search?: string): Promise<[number, n
         const handle = product.handle.toLowerCase();
         const tags = product.tags.map((tag: string) => tag.toLowerCase());
 
-        const searchTerms = ['t-shirts', 't-shirt', 'tshirts', 'tshirt'];
-
         // Check if any of the search terms are found in any relevant fields
         const found = searchTerms.some((term) => {
           return (

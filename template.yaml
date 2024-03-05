@@ -2,37 +2,26 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   lambda-api
 Transform:
-- AWS::Serverless-2016-10-31
+  - AWS::Serverless-2016-10-31
 
 Resources:
-
-  # This is a Lambda function config associated with the source code: put-item.js
-  putItemFunction:
+  lambda-api-pricing:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/put-item.putItemHandler
+      Handler: lambda.handler
       Runtime: nodejs20.x
       Architectures:
-      - x86_64
+        - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: A simple example includes a HTTP post method to add one item to
-        a DynamoDB table.
-      Environment:
-        Variables:
-          SAMPLE_TABLE: !Ref SampleTable
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /
-            Method: POST
-
+      FunctionUrlConfig:
+        AuthType: NONE
 
 Outputs:
-  WebEndpoint:
-    Description: API Gateway endpoint URL for Prod stage
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  MyFunctionUrlEndpoint:
+    Description: 'My Lambda Function URL Endpoint'
+    Value:
+      Fn::GetAtt: FunctionUrl.FunctionUrl
 Globals:
   Function:
     LoggingConfig:
