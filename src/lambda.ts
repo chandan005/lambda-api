@@ -1,8 +1,21 @@
 import { IProduct } from './interfaces/IProduct';
 import { IVariant } from './interfaces/IVariant';
 
+const productCategorySearch = [
+  {
+    type: 't-shirt',
+    searchTerms: ['t-shirts', 't-shirt', 'tshirts', 'tshirt'],
+  },
+
+  {
+    type: 'bottoms',
+    searchTerms: ['bottom', 'bottoms'],
+  },
+];
+
 interface ShopifyData {
   url: string;
+  search?: string;
 }
 
 interface ResponseData {
@@ -34,11 +47,23 @@ const getCurrency = async (url: string): Promise<string> => {
   }
 };
 
-const getMinMaxPrices = async (url: string): Promise<[number, number]> => {
+const getMinMaxPrices = async (url: string, search?: string): Promise<[number, number]> => {
   try {
+    let searchTerms: string[] = [];
+    const defaultCategory = productCategorySearch.find((category) => category.type === 't-shirt');
+    searchTerms = defaultCategory
+      ? defaultCategory.searchTerms
+      : ['t-shirts', 't-shirt', 'tshirts', 'tshirt'];
+
+    if (search) {
+      const matchingCategory = productCategorySearch.find((category) => category.type === search);
+      if (matchingCategory) {
+        searchTerms = matchingCategory.searchTerms;
+      }
+    }
     const response = await fetch(`${url}/products.json`);
     const productsData = await response.json();
-    const tShirtPrices: number[] = [];
+    const prices: number[] = [];
 
     productsData.products.forEach((product: IProduct) => {
       product.variants.forEach((variant: IVariant) => {
@@ -47,7 +72,7 @@ const getMinMaxPrices = async (url: string): Promise<[number, number]> => {
         const handle = product.handle.toLowerCase();
         const tags = product.tags.map((tag: string) => tag.toLowerCase());
 
-        const searchTerms = ['t-shirts', 't-shirt', 'tshirts', 'tshirt', 'bottoms'];
+        const searchTerms = ['t-shirts', 't-shirt', 'tshirts', 'tshirt'];
 
         // Check if any of the search terms are found in any relevant fields
         const found = searchTerms.some((term) => {
@@ -62,14 +87,14 @@ const getMinMaxPrices = async (url: string): Promise<[number, number]> => {
         if (found) {
           const price = parseFloat(variant.price);
           if (!isNaN(price)) {
-            tShirtPrices.push(price);
+            prices.push(price);
           }
         }
       });
     });
 
-    const minTshirtPrice = Math.min(...tShirtPrices);
-    const maxTshirtPrice = Math.max(...tShirtPrices);
+    const minTshirtPrice = Math.min(...prices);
+    const maxTshirtPrice = Math.max(...prices);
     const minPrice = isFinite(minTshirtPrice) ? minTshirtPrice : 0;
     const maxPrice = isFinite(maxTshirtPrice) ? maxTshirtPrice : 0;
     return [minPrice, maxPrice];
@@ -85,7 +110,7 @@ export const handler = async (event: any) => {
       return handleResponse(400, 'Missing body');
     }
     const data: ShopifyData = JSON.parse(event.body);
-    let { url } = data;
+    let { url, search } = data;
     if (!url.startsWith('https://')) {
       url = `https://${url}`;
     }
@@ -95,7 +120,7 @@ export const handler = async (event: any) => {
     }
 
     const currency = await getCurrency(url);
-    const [minPrice, maxPrice] = await getMinMaxPrices(url);
+    const [minPrice, maxPrice] = await getMinMaxPrices(url, search);
 
     const responseData: ResponseData = {
       url,
