@@ -1,0 +1,51 @@
+name: '[CD] shopify-api-prices'
+
+env:
+  AWS_REGION: ap-southeast-2
+
+on:
+  push:
+    branches: [main, feature/deployment-pipeline]
+    paths:
+      - '**'
+      - '.github/workflows/main.yml'
+      - '!**.md'
+      - '!**.txt'
+  workflow_dispatch:
+
+jobs:
+  lambda-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Move node_modules to dist
+        run: mv node_modules dist/node_modules
+
+      - name: Zip
+        run: |
+          cd dist
+          zip -r ../function.zip .
+
+      - name: Deploy to AWS
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: LambdaApiTest
+          zip_file: function.zip

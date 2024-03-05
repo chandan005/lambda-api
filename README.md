@@ -29,9 +29,9 @@ To run the application locally, use the following command:
     npm run local
 
 ## Deployment
-To deploy the application using SAM, use the following command:
+The deployment is done via github actions. However, there is also provision to use AWS SAM and Cloudformation if required.
 1. Install AWS SAM CLI by following the instructions provided in the AWS SAM documentation.
-2. Build
+2. Build (Make sure to update the aws role in template.yaml)
     ```bash
     sam build
 3. Deploy

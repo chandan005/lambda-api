@@ -9,7 +9,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: LambdaApiTest
-      Role: 'arn:aws:iam::318240840298:role/Batch_execute'
+      Role: 'arn:aws:iam::testRole'
       Handler: lambda.handler
       Runtime: nodejs20.x
       Architectures:
