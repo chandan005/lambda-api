@@ -4,25 +4,26 @@
     "description": "",
     "main": "lambda.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "tsc",
-      "local": "tsc && node dist/lambda.js"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "local": "tsc && node dist/lambda.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
-      "@types/aws-lambda": "^8.10.119",
-      "@types/node": "^20.4.7",
-      "aws-sdk": "^2.1428.0",
-      "node-fetch": "^2.6.7",
-      "ts-node": "^10.9.1",
-      "tslib": "^2.6.1"
+        "@types/aws-lambda": "^8.10.119",
+        "@types/node": "^20.4.7",
+        "aws-sdk": "^2.1428.0",
+        "cheerio": "^1.0.0-rc.12",
+        "node-fetch": "^2.6.7",
+        "ts-node": "^10.9.1",
+        "tslib": "^2.6.1"
     },
     "devDependencies": {
-      "@rollup/plugin-typescript": "^11.1.2",
-      "@types/node-fetch": "^2.6.4",
-      "rollup": "^3.27.2",
-      "typescript": "^5.1.6"
+        "@rollup/plugin-typescript": "^11.1.2",
+        "@types/node-fetch": "^2.6.4",
+        "rollup": "^3.27.2",
+        "typescript": "^5.1.6"
     }
-  }
+}
