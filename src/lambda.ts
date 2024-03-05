@@ -1,4 +1,3 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
 import { IProduct } from './interfaces/IProduct';
 import { IVariant } from './interfaces/IVariant';
 
@@ -30,6 +29,7 @@ const getCurrency = async (url: string): Promise<string> => {
     }
     throw new Error('Currency not found');
   } catch (error) {
+    console.log(error);
     throw new Error('Failed to fetch currency');
   }
 };
@@ -43,7 +43,23 @@ const getMinMaxPrices = async (url: string): Promise<[number, number]> => {
     productsData.products.forEach((product: IProduct) => {
       product.variants.forEach((variant: IVariant) => {
         const productType = product.product_type.toLowerCase();
-        if (productType.includes('t-shirt') || productType.includes('shirt')) {
+        const title = product.title.toLowerCase();
+        const handle = product.handle.toLowerCase();
+        const tags = product.tags.map((tag: string) => tag.toLowerCase());
+
+        const searchTerms = ['t-shirts', 't-shirt', 'tshirts', 'tshirt', 'bottoms'];
+
+        // Check if any of the search terms are found in any relevant fields
+        const found = searchTerms.some((term) => {
+          return (
+            productType.includes(term) ||
+            title.includes(term) ||
+            handle.includes(term) ||
+            tags.some((tag) => tag.includes(term))
+          );
+        });
+
+        if (found) {
           const price = parseFloat(variant.price);
           if (!isNaN(price)) {
             tShirtPrices.push(price);
@@ -54,16 +70,25 @@ const getMinMaxPrices = async (url: string): Promise<[number, number]> => {
 
     const minTshirtPrice = Math.min(...tShirtPrices);
     const maxTshirtPrice = Math.max(...tShirtPrices);
-    return [minTshirtPrice, maxTshirtPrice];
+    const minPrice = isFinite(minTshirtPrice) ? minTshirtPrice : 0;
+    const maxPrice = isFinite(maxTshirtPrice) ? maxTshirtPrice : 0;
+    return [minPrice, maxPrice];
   } catch (error) {
+    console.error(error);
     throw new Error('Failed to fetch product prices');
   }
 };
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+export const handler = async (event: any) => {
   try {
-    const data: ShopifyData = JSON.parse(event.body!);
-    const { url } = data;
+    if (!event.body) {
+      return handleResponse(400, 'Missing body');
+    }
+    const data: ShopifyData = JSON.parse(event.body);
+    let { url } = data;
+    if (!url.startsWith('https://')) {
+      url = `https://${url}`;
+    }
 
     if (!url) {
       return handleResponse(400, 'Missing url');
@@ -81,6 +106,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return handleResponse(200, responseData);
   } catch (error: any) {
+    console.error(error);
     return handleResponse(500, error.message);
   }
 };
