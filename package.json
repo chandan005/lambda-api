@@ -15,7 +15,6 @@
         "@types/aws-lambda": "^8.10.119",
         "@types/node": "^20.4.7",
         "aws-sdk": "^2.1428.0",
-        "cheerio": "^1.0.0-rc.12",
         "ts-node": "^10.9.1",
         "tslib": "^2.6.1"
     },
